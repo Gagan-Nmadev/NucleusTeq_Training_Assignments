@@ -12,3 +12,15 @@ body {
     background-color: #f5f7fa;
     color: #333;
 }
+header {
+    text-align: center;
+    background-color: #0077b6;
+    color: white;
+    padding: 20px;
+}
+
+header img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+}
