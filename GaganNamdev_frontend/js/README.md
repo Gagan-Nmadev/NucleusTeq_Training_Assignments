@@ -65,7 +65,7 @@ Adds marks of all students for a subject
 Divides by total number of students
 Gives overall class performance per subject.
 ### code 
-![Average](Screenshots/Subject-wise average_score5.png)
+![Average](Screenshots/Subject-wise_average_score5.png)
 ### output
 ![Average](Screenshots/Find_class_topper6(2).png)
 
