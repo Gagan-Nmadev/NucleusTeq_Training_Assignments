@@ -58,7 +58,6 @@ const students = [
         attendance: 85
     }
 ];
-console.log(JSON.stringify(students, null, 2));
 
 // Step 2: Calculate total marks
 
@@ -76,3 +75,16 @@ students.forEach(function(student) {
     console.log(student.name + " Total Marks: " + total);
 });
 
+// Step 3: Calculate average marks
+
+function calculateAverage(student) {
+    let total = calculateTotalMarks(student); 
+    let average = total / student.marks.length; 
+
+    return average;
+}
+
+students.forEach(function(student) {
+    let avg = calculateAverage(student);
+    console.log(student.name + " Average: " + avg.toFixed(1));
+});
