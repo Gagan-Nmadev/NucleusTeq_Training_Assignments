@@ -138,3 +138,21 @@ subjects.forEach(function(subject) {
 
     console.log("Average " + subject + " Score: " + avg);
 });
+
+// Step 6: Find class topper
+
+let highestMarks = 0;
+let topperName = "";
+
+students.forEach(function(student) {
+
+    let total = calculateTotalMarks(student);
+
+    if (total > highestMarks) {
+        highestMarks = total;
+        topperName = student.name;
+    }
+
+});
+
+console.log("Class Topper: " + topperName + " with " + highestMarks + " marks");
