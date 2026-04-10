@@ -25,4 +25,17 @@ public class PatternPrinter {
         sc.close();
     }
 
+    // Method for triangle
+    private static void printTriangle(int size) {
+
+        for (int row = 1; row <= size; row++) {
+
+            for (int col = 1; col <= row; col++) {
+                System.out.print("* ");
+            }
+
+            System.out.println();
+        }
+    }
+
     
