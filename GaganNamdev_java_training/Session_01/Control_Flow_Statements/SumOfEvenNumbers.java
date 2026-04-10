@@ -16,5 +16,8 @@ public class SumOfEvenNumbers {
 
             i++; // increment counter
         }
-
+          // final output
+           System.out.println("Sum of even numbers from 1 to 10 is: " + sum);
+    }
 }
+
