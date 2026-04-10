@@ -24,5 +24,15 @@ public class LinearSearch {
 
         int index = -1; // -1 means not found
 
+        // LINEAR SEARCH LOGIC
+        // =========================
+        for (int i = 0; i < n; i++) {
+
+            if (arr[i] == key) {
+                index = i;
+                break; // stop when found
+            }
+        }
+
     
 }
