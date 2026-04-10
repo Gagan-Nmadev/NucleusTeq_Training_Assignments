@@ -12,4 +12,15 @@ public class MultiplicationTable {
 
         System.out.println("\nMultiplication Table of " + number + ":\n");
     
+        //  for loop to generate table
+        for (int i = 1; i <= 10; i++) {
+
+            int result = number * i;
+
+            System.out.println(number + " x " + i + " = " + result);
+        }
+
+        sc.close(); 
+    }
 }
+
