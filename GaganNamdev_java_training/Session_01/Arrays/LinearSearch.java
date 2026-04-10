@@ -16,5 +16,13 @@ public class LinearSearch {
         System.out.println("Enter array elements:");
         for (int i = 0; i < n; i++) {
             arr[i] = sc.nextInt();
+         }
+
+        //  element to search
+        System.out.print("Enter element to search: ");
+        int key = sc.nextInt();
+
+        int index = -1; // -1 means not found
+
     
 }
