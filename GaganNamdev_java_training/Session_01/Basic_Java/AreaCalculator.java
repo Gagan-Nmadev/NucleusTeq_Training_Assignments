@@ -1,4 +1,3 @@
-package NucleusTeq_Training_Assignments.GaganNamdev_java_training.Session_01.Basic_Java;
 
 import java.util.Scanner;
 
@@ -9,7 +8,7 @@ import java.util.Scanner;
  */
 public class AreaCalculator {
 
-    // Constant values
+    // Constant valuesgg
     private static final double PI = 3.14159;
 
     public static void main(String[] args) {
@@ -22,6 +21,8 @@ public class AreaCalculator {
         System.out.println("3. Triangle");
 
         int choice = scanner.nextInt();
+
+        // Use switch case method.
 
         switch (choice) {
             case 1:
@@ -97,5 +98,6 @@ public class AreaCalculator {
         System.out.println("Area of Triangle: " + area);
     }
 }
+
 
 
