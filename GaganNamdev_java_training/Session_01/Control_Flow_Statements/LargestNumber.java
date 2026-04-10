@@ -18,4 +18,22 @@ public class LargestNumber {
 
         int largest;
     
+
+         //  Conditional statements to find largest number
+        if (num1 >= num2 && num1 >= num3) {
+            largest = num1;
+        } 
+        else if (num2 >= num1 && num2 >= num3) {
+            largest = num2;
+        } 
+        else {
+            largest = num3;
+        }
+
+        //  Output result
+        System.out.println("Largest number is: " + largest);
+
+        sc.close(); // good practice
+    }
+
 }
