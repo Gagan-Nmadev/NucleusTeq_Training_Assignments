@@ -27,5 +27,19 @@ public class OperatorsDemo {
         System.out.println("a <= b : " + (a <= b));  // false
 
 
+        //     LOGICAL OPERATORS
+        // =========================
+        System.out.println("\n===== Logical Operators =====");
+
+        boolean condition1 = (a > b);   // true
+        boolean condition2 = (a < b);   // false
+
+        System.out.println("condition1 && condition2 : " + (condition1 && condition2)); // false
+        System.out.println("condition1 || condition2 : " + (condition1 || condition2)); // true
+        System.out.println("!condition1 : " + (!condition1)); // false
+    }
+}
+
+
     
 }
