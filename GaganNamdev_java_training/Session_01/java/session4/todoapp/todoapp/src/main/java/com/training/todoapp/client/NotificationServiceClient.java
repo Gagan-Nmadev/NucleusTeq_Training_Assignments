@@ -27,3 +27,4 @@ public class NotificationServiceClient {
         log.info("Notification sent — todo deleted [id={}]", id);
     }
 }
+    
