@@ -1,27 +1,25 @@
-package com.example.reimbursementportal.entity;
+package com.example.reimbursementportal.dto;
 
 import com.example.reimbursementportal.enums.Role;
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "users")
-public class User {
+public class LoginResponseDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
-    @Column(unique = true, nullable = false)
     private String email;
-
-    private String password;
-
-    @Enumerated(EnumType.STRING)
     private Role role;
+    private String message;
 
-    private Long managerId;
+    public LoginResponseDto() {
+    }
+
+    public LoginResponseDto(Long id, String name, String email, Role role, String message) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.message = message;
+    }
 
     public Long getId() {
         return id;
@@ -35,16 +33,12 @@ public class User {
         return email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public Role getRole() {
         return role;
     }
 
-    public Long getManagerId() {
-        return managerId;
+    public String getMessage() {
+        return message;
     }
 
     public void setId(Long id) {
@@ -59,15 +53,11 @@ public class User {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public void setRole(Role role) {
         this.role = role;
     }
 
-    public void setManagerId(Long managerId) {
-        this.managerId = managerId;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

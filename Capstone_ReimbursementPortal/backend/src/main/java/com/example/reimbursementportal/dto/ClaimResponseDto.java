@@ -1,33 +1,35 @@
-package com.example.reimbursementportal.entity;
+package com.example.reimbursementportal.dto;
 
 import com.example.reimbursementportal.enums.ClaimStatus;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "claims")
-public class Claim {
+public class ClaimResponseDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private BigDecimal amount;
-
     private LocalDate claimDate;
-
     private String description;
-
-    @Enumerated(EnumType.STRING)
     private ClaimStatus status;
-
     private Long employeeId;
-
     private Long reviewerId;
-
     private String reviewerComment;
+
+    public ClaimResponseDto() {
+    }
+
+    public ClaimResponseDto(Long id, BigDecimal amount, LocalDate claimDate, String description,
+                            ClaimStatus status, Long employeeId, Long reviewerId, String reviewerComment) {
+        this.id = id;
+        this.amount = amount;
+        this.claimDate = claimDate;
+        this.description = description;
+        this.status = status;
+        this.employeeId = employeeId;
+        this.reviewerId = reviewerId;
+        this.reviewerComment = reviewerComment;
+    }
 
     public Long getId() {
         return id;

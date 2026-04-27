@@ -6,12 +6,12 @@ import com.example.reimbursementportal.entity.User;
 import com.example.reimbursementportal.enums.Role;
 import com.example.reimbursementportal.exception.BusinessException;
 import com.example.reimbursementportal.exception.ResourceNotFoundException;
+import com.example.reimbursementportal.mapper.UserMapper;
 import com.example.reimbursementportal.repository.UserRepository;
 import com.example.reimbursementportal.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,12 +32,6 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("Email already exists");
         }
 
-        User user = new User();
-        user.setName(userRequestDto.getName());
-        user.setEmail(userRequestDto.getEmail());
-        user.setPassword(userRequestDto.getPassword());
-        user.setRole(userRequestDto.getRole());
-
         if (userRequestDto.getRole() == Role.EMPLOYEE && userRequestDto.getManagerId() != null) {
             User manager = userRepository.findById(userRequestDto.getManagerId())
                     .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
@@ -45,20 +39,20 @@ public class UserServiceImpl implements UserService {
             if (manager.getRole() != Role.MANAGER) {
                 throw new BusinessException("Assigned user is not a manager");
             }
-
-            user.setManager(manager);
         }
 
+        User user = UserMapper.toEntity(userRequestDto);
         User savedUser = userRepository.save(user);
-        return mapToResponse(savedUser);
+
+        return UserMapper.toResponse(savedUser);
     }
 
     @Override
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .map(UserMapper::toResponse)
+                .toList();
     }
 
     @Override
@@ -73,17 +67,5 @@ public class UserServiceImpl implements UserService {
         if (!email.endsWith(COMPANY_DOMAIN)) {
             throw new BusinessException("Email must belong to company domain");
         }
-    }
-
-    private UserResponseDto mapToResponse(User user) {
-        Long managerId = user.getManager() != null ? user.getManager().getId() : null;
-
-        return new UserResponseDto(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole(),
-                managerId
-        );
     }
 }

@@ -1,5 +1,6 @@
 package com.example.reimbursementportal.controller;
 
+import com.example.reimbursementportal.dto.ApiResponseDto;
 import com.example.reimbursementportal.dto.UserRequestDto;
 import com.example.reimbursementportal.dto.UserResponseDto;
 import com.example.reimbursementportal.service.UserService;
@@ -8,10 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/admin/users")
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"})
 public class AdminController {
 
     private final UserService userService;
@@ -21,19 +21,29 @@ public class AdminController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> createUser(
+            @Valid @RequestBody UserRequestDto userRequestDto) {
+
         UserResponseDto response = userService.createUser(userRequestDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        return new ResponseEntity<>(
+                new ApiResponseDto<>("User created successfully", response),
+                HttpStatus.CREATED
+        );
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<ApiResponseDto<Object>> getAllUsers() {
+        return ResponseEntity.ok(
+                new ApiResponseDto<>("Users fetched successfully", userService.getAllUsers())
+        );
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponseDto<Object>> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
-        return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.ok(
+                new ApiResponseDto<>("User deleted successfully", null)
+        );
     }
 }
