@@ -1,9 +1,11 @@
 package com.example.reimbursementportal.service.impl;
 
+import com.example.reimbursementportal.dto.ClaimActionRequestDto;
 import com.example.reimbursementportal.dto.ClaimRequestDto;
 import com.example.reimbursementportal.dto.ClaimResponseDto;
 import com.example.reimbursementportal.entity.Claim;
 import com.example.reimbursementportal.entity.User;
+import com.example.reimbursementportal.enums.ClaimStatus;
 import com.example.reimbursementportal.enums.Role;
 import com.example.reimbursementportal.exception.BusinessException;
 import com.example.reimbursementportal.exception.ResourceNotFoundException;
@@ -59,5 +61,51 @@ public class ClaimServiceImpl implements ClaimService {
 
         return claimRepository.findByReviewerId(reviewerId, PageRequest.of(page, size))
                 .map(ClaimMapper::toResponse);
+    }
+
+    @Override
+    public ClaimResponseDto approveClaim(Long claimId, Long reviewerId, ClaimActionRequestDto requestDto) {
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
+
+        validateReviewer(claim, reviewerId);
+
+        if (claim.getStatus() != ClaimStatus.SUBMITTED) {
+            throw new BusinessException("Only submitted claims can be approved");
+        }
+
+        claim.setStatus(ClaimStatus.APPROVED);
+        claim.setReviewerComment(requestDto.getComment());
+
+        Claim savedClaim = claimRepository.save(claim);
+        return ClaimMapper.toResponse(savedClaim);
+    }
+
+    @Override
+    public ClaimResponseDto rejectClaim(Long claimId, Long reviewerId, ClaimActionRequestDto requestDto) {
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
+
+        validateReviewer(claim, reviewerId);
+
+        if (claim.getStatus() != ClaimStatus.SUBMITTED) {
+            throw new BusinessException("Only submitted claims can be rejected");
+        }
+
+        if (requestDto.getComment() == null || requestDto.getComment().trim().isEmpty()) {
+            throw new BusinessException("Comment is required for rejection");
+        }
+
+        claim.setStatus(ClaimStatus.REJECTED);
+        claim.setReviewerComment(requestDto.getComment());
+
+        Claim savedClaim = claimRepository.save(claim);
+        return ClaimMapper.toResponse(savedClaim);
+    }
+
+    private void validateReviewer(Claim claim, Long reviewerId) {
+        if (claim.getReviewerId() == null || !claim.getReviewerId().equals(reviewerId)) {
+            throw new BusinessException("You are not allowed to review this claim");
+        }
     }
 }

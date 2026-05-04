@@ -1,5 +1,6 @@
 package com.example.reimbursementportal.controller;
 
+import com.example.reimbursementportal.dto.ClaimActionRequestDto;
 import com.example.reimbursementportal.dto.ClaimResponseDto;
 import com.example.reimbursementportal.service.ClaimService;
 import org.springframework.data.domain.Page;
@@ -24,5 +25,25 @@ public class ReviewerClaimController {
             @RequestParam(defaultValue = "5") int size) {
 
         return ResponseEntity.ok(claimService.getAssignedClaims(reviewerId, page, size));
+    }
+
+    @PutMapping("/{claimId}/approve")
+    public ResponseEntity<ClaimResponseDto> approveClaim(
+            @PathVariable Long claimId,
+            @RequestParam Long reviewerId,
+            @RequestBody ClaimActionRequestDto requestDto) {
+
+        ClaimResponseDto response = claimService.approveClaim(claimId, reviewerId, requestDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{claimId}/reject")
+    public ResponseEntity<ClaimResponseDto> rejectClaim(
+            @PathVariable Long claimId,
+            @RequestParam Long reviewerId,
+            @RequestBody ClaimActionRequestDto requestDto) {
+
+        ClaimResponseDto response = claimService.rejectClaim(claimId, reviewerId, requestDto);
+        return ResponseEntity.ok(response);
     }
 }
