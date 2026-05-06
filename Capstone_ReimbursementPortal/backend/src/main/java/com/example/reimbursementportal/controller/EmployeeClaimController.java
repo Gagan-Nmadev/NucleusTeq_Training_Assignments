@@ -4,6 +4,7 @@ import com.example.reimbursementportal.dto.ClaimRequestDto;
 import com.example.reimbursementportal.dto.ClaimResponseDto;
 import com.example.reimbursementportal.service.ClaimService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,5 +27,14 @@ public class EmployeeClaimController {
 
         ClaimResponseDto response = claimService.submitClaim(employeeId, claimRequestDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{employeeId}")
+    public ResponseEntity<Page<ClaimResponseDto>> getClaimsByEmployee(
+            @PathVariable Long employeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        return ResponseEntity.ok(claimService.getClaimsByEmployee(employeeId, page, size));
     }
 }

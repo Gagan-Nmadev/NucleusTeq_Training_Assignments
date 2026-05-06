@@ -11,5 +11,7 @@ public interface UserService {
 
     List<UserResponseDto> getAllUsers();
 
+    UserResponseDto assignManager(Long employeeId, Long managerId);
+
     void deleteUser(Long userId);
 }

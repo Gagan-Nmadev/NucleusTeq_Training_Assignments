@@ -63,6 +63,20 @@ public class ClaimServiceImpl implements ClaimService {
                 .map(ClaimMapper::toResponse);
     }
 
+    // Employee apne submitted claims dekhne ke liye
+    @Override
+    public Page<ClaimResponseDto> getClaimsByEmployee(Long employeeId, int page, int size) {
+        User employee = userRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        if (employee.getRole() != Role.EMPLOYEE) {
+            throw new BusinessException("Only employee can view submitted claims");
+        }
+
+        return claimRepository.findByEmployeeId(employeeId, PageRequest.of(page, size))
+                .map(ClaimMapper::toResponse);
+    }
+
     @Override
     public ClaimResponseDto approveClaim(Long claimId, Long reviewerId, ClaimActionRequestDto requestDto) {
         Claim claim = claimRepository.findById(claimId)

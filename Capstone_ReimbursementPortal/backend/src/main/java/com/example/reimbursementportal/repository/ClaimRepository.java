@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ClaimRepository extends JpaRepository<Claim, Long> {
 
     Page<Claim> findByReviewerId(Long reviewerId, Pageable pageable);
+
+    Page<Claim> findByEmployeeId(Long employeeId, Pageable pageable);
 }

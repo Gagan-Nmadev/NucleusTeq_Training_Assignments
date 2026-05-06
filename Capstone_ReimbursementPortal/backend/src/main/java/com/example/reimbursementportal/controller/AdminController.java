@@ -39,6 +39,18 @@ public class AdminController {
         );
     }
 
+    @PutMapping("/{employeeId}/manager/{managerId}")
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> assignManager(
+            @PathVariable Long employeeId,
+            @PathVariable Long managerId) {
+
+        UserResponseDto response = userService.assignManager(employeeId, managerId);
+
+        return ResponseEntity.ok(
+                new ApiResponseDto<>("Manager assigned successfully", response)
+        );
+    }
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponseDto<Object>> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);

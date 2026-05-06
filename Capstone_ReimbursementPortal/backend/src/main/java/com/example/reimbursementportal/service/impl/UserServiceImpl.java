@@ -56,6 +56,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDto assignManager(Long employeeId, Long managerId) {
+        User employee = userRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        if (employee.getRole() != Role.EMPLOYEE) {
+            throw new BusinessException("Manager can be assigned only to an employee");
+        }
+
+        User manager = userRepository.findById(managerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
+
+        if (manager.getRole() != Role.MANAGER) {
+            throw new BusinessException("Selected user is not a manager");
+        }
+
+        employee.setManagerId(manager.getId());
+
+        User updatedEmployee = userRepository.save(employee);
+        return UserMapper.toResponse(updatedEmployee);
+    }
+
+    @Override
     public void deleteUser(Long userId) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
