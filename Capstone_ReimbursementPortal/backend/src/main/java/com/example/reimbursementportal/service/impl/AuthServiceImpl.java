@@ -1,5 +1,6 @@
 package com.example.reimbursementportal.service.impl;
 
+import com.example.reimbursementportal.constant.AppConstants;
 import com.example.reimbursementportal.dto.LoginRequestDto;
 import com.example.reimbursementportal.dto.LoginResponseDto;
 import com.example.reimbursementportal.entity.User;
@@ -19,11 +20,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new BusinessException("Invalid email or password"));
+                .orElseThrow(() ->
+                        new BusinessException(AppConstants.INVALID_EMAIL_OR_PASSWORD));
 
         if (!user.getPassword().equals(loginRequestDto.getPassword())) {
-            throw new BusinessException("Invalid email or password");
+            throw new BusinessException(AppConstants.INVALID_EMAIL_OR_PASSWORD);
         }
 
         return new LoginResponseDto(
@@ -31,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
                 user.getName(),
                 user.getEmail(),
                 user.getRole(),
-                "Login successful"
+                AppConstants.LOGIN_SUCCESSFUL
         );
     }
 }
