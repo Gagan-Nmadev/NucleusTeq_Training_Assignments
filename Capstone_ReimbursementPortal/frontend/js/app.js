@@ -1,375 +1,351 @@
-const BASE_URL = "http://localhost:8080";
+const API_BASE = "http://localhost:8080/api";
 
-let managerPage = 0;
+let currentUser = null;
+let dashboardClaims = [];
 let employeePage = 0;
-let adminPage = 0;
+let reviewPage = 0;
 const pageSize = 5;
 
-function getLoggedInUser() {
-  return JSON.parse(localStorage.getItem("loggedInUser"));
+function $(id) {
+  return document.getElementById(id);
 }
 
-function showToast(message, isError = false) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.remove("hidden");
-  toast.classList.toggle("error", isError);
-
-  setTimeout(() => {
-    toast.classList.add("hidden");
-    toast.classList.remove("error");
-  }, 2500);
+function toast(message, type = "success") {
+  const box = document.createElement("div");
+  box.className = `toast ${type}`;
+  box.innerText = message;
+  $("toastContainer").appendChild(box);
+  setTimeout(() => box.remove(), 3000);
 }
 
-function showPanel(panelId) {
-  document.getElementById("adminPanel").classList.add("hidden");
-  document.getElementById("employeePanel").classList.add("hidden");
-  document.getElementById("managerPanel").classList.add("hidden");
-  document.getElementById(panelId).classList.remove("hidden");
+function getUser() {
+  const data = localStorage.getItem("loggedInUser");
+  return data ? JSON.parse(data) : null;
 }
 
-function showRolePanel(role) {
-  document.getElementById("adminNavBtn").classList.add("hidden");
-  document.getElementById("employeeNavBtn").classList.add("hidden");
-  document.getElementById("managerNavBtn").classList.add("hidden");
-
-  if (role === "ADMIN") {
-    document.getElementById("adminNavBtn").classList.remove("hidden");
-    showPanel("adminPanel");
-    loadUsers();
-    loadAdminClaims();
-  } else if (role === "EMPLOYEE") {
-    document.getElementById("employeeNavBtn").classList.remove("hidden");
-    showPanel("employeePanel");
-    loadMyClaims();
-  } else if (role === "MANAGER") {
-    document.getElementById("managerNavBtn").classList.remove("hidden");
-    showPanel("managerPanel");
-    loadAssignedClaims();
-  }
-}
-
-async function login() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-  const loginMessage = document.getElementById("loginMessage");
-
-  loginMessage.innerText = "";
-
-  if (!email || !password) {
-    loginMessage.innerText = "Email and password are required";
-    return;
-  }
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      loginMessage.innerText = data.message || "Invalid email or password";
-      return;
-    }
-
-    localStorage.setItem("loggedInUser", JSON.stringify(data));
-
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("dashboardSection").classList.remove("hidden");
-    document.getElementById("welcomeText").innerText = `Welcome, ${data.name} (${data.role})`;
-
-    showRolePanel(data.role);
-    showToast("Login successful");
-  } catch {
-    loginMessage.innerText = "Server error";
-  }
+function saveUser(user) {
+  localStorage.setItem("loggedInUser", JSON.stringify(user));
 }
 
 function logout() {
   localStorage.removeItem("loggedInUser");
-  document.getElementById("dashboardSection").classList.add("hidden");
-  document.getElementById("loginSection").classList.remove("hidden");
-  document.getElementById("loginMessage").innerText = "";
-  showToast("Logged out successfully");
+  currentUser = null;
+  $("appPage").classList.add("hidden");
+  $("loginPage").classList.remove("hidden");
 }
 
-/* ADMIN */
-
-async function createUser() {
-  const body = {
-    name: document.getElementById("userName").value.trim(),
-    email: document.getElementById("userEmail").value.trim(),
-    password: document.getElementById("userPassword").value.trim(),
-    role: document.getElementById("userRole").value
+async function request(path, method = "GET", body = null) {
+  const options = {
+    method,
+    headers: { "Content-Type": "application/json" }
   };
 
-  const managerId = document.getElementById("userManagerId").value.trim();
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
 
-  if (!body.name || !body.email || !body.password) {
-    showToast("All fields are required", true);
+  const res = await fetch(API_BASE + path, options);
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data.message || "Request failed");
+  }
+
+  return data;
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  hideError();
+
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  const btn = $("loginBtn");
+
+  if (!email.endsWith("@company.com")) {
+    $("email").classList.add("error");
+    $("emailError").classList.add("show");
     return;
   }
 
-  if (!body.email.endsWith("@company.com")) {
-    showToast("Only company email allowed", true);
-    return;
-  }
+  $("email").classList.remove("error");
+  $("emailError").classList.remove("show");
 
-  if (managerId) {
-    body.managerId = Number(managerId);
-  }
+  btn.classList.add("loading");
+  btn.textContent = "Signing in…";
 
   try {
-    const response = await fetch(`${BASE_URL}/api/admin/users`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+    const data = await request("/auth/login", "POST", { email, password });
 
-    const data = await response.json();
+    saveUser(data.user || data);
+    currentUser = data.user || data;
 
-    if (!response.ok) {
-      showToast(data.message || "Failed to create user", true);
-      return;
-    }
+    initApp();
+    toast("Welcome back, " + currentUser.name + "!", "success");
 
-    document.getElementById("userName").value = "";
-    document.getElementById("userEmail").value = "";
-    document.getElementById("userPassword").value = "";
-    document.getElementById("userManagerId").value = "";
-    document.getElementById("userRole").value = "ADMIN";
-
-    showToast("User created successfully");
-    loadUsers();
-  } catch {
-    showToast("Error while creating user", true);
+  } catch (err) {
+    showError(err.message || "Invalid email or password");
+  } finally {
+    btn.classList.remove("loading");
+    btn.textContent = "Sign in";
   }
 }
 
-async function loadUsers() {
-  try {
-    const response = await fetch(`${BASE_URL}/api/admin/users`);
-    const data = await response.json();
+function showError(msg) {
+  const box = $("errorBox");
+  box.textContent = msg;
+  box.style.display = "block";
+}
 
-    const users = data.data || data;
+function hideError() {
+  const box = $("errorBox");
+  if (box) {
+    box.style.display = "none";
+  }
+}
 
-    if (!response.ok) {
-      showToast(data.message || "Failed to load users", true);
-      return;
-    }
+function togglePassword() {
+  const pw = $("password");
+  const icon = $("eyeIcon");
 
-    if (!users || users.length === 0) {
-      document.getElementById("usersWrap").innerHTML = `<div class="no-data">No users found</div>`;
-      return;
-    }
-
-    let html = `
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Manager ID</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
+  if (pw.type === "password") {
+    pw.type = "text";
+    icon.innerHTML = `
+      <path d="M2 2l12 12M6.5 6.6A2 2 0 0110 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      <path d="M1.5 8C3 5 5.3 3.5 8 3.5c1 0 2 .2 2.9.7M11.5 5.8C13 6.9 14 7.8 14.5 8c-1.5 3-3.8 4.5-6.5 4.5a6.5 6.5 0 01-2.8-.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
     `;
-
-    users.forEach(user => {
-      html += `
-        <tr>
-          <td>${user.id}</td>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>${user.role}</td>
-          <td>${user.managerId ?? "-"}</td>
-          <td>
-            <button class="danger-btn" onclick="deleteUser(${user.id})">Delete</button>
-          </td>
-        </tr>
-      `;
-    });
-
-    html += `</tbody></table>`;
-    document.getElementById("usersWrap").innerHTML = html;
-  } catch {
-    showToast("Error while loading users", true);
+  } else {
+    pw.type = "password";
+    icon.innerHTML = `
+      <path d="M1.5 8C3 5 5.3 3.5 8 3.5S13 5 14.5 8c-1.5 3-3.8 4.5-6.5 4.5S3 11 1.5 8z" stroke="currentColor" stroke-width="1.3"/>
+      <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/>
+    `;
   }
 }
 
-async function deleteUser(userId) {
-  try {
-    const response = await fetch(`${BASE_URL}/api/admin/users/${userId}`, {
-      method: "DELETE"
-    });
+function initApp() {
+  currentUser = getUser();
 
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      showToast(data?.message || "Failed to delete user", true);
-      return;
-    }
-
-    showToast("User deleted successfully");
-    loadUsers();
-  } catch {
-    showToast("Error while deleting user", true);
-  }
-}
-
-async function assignManager() {
-  const employeeId = document.getElementById("assignEmployeeId")?.value;
-  const managerId = document.getElementById("assignManagerId")?.value;
-
-  if (!employeeId || !managerId) {
-    showToast("Employee ID and Manager ID required", true);
+  if (!currentUser) {
+    $("loginPage").classList.remove("hidden");
+    $("appPage").classList.add("hidden");
     return;
   }
 
-  try {
-    const response = await fetch(`${BASE_URL}/api/admin/users/${employeeId}/manager/${managerId}`, {
-      method: "PUT"
-    });
+  $("loginPage").classList.add("hidden");
+  $("appPage").classList.remove("hidden");
 
-    const data = await response.json().catch(() => null);
+  $("sideUserName").innerText = currentUser.name;
+  $("sideUserRole").innerText = currentUser.role;
+  $("userAvatar").innerText = getInitials(currentUser.name);
+  $("profileName").innerText = currentUser.name;
+  $("profileEmail").innerText = currentUser.email;
+  $("profileRole").innerText = currentUser.role;
 
-    if (!response.ok) {
-      showToast(data?.message || "Failed to assign manager", true);
-      return;
-    }
+  setupRoleNav();
+  showPage("dashboardPage");
+  loadDashboardClaims();
+}
 
-    showToast("Manager assigned successfully");
-    loadUsers();
-  } catch {
-    showToast("Error while assigning manager", true);
+function getInitials(name) {
+  return name.split(" ").map(x => x[0]).join("").slice(0, 2).toUpperCase();
+}
+
+function setupRoleNav() {
+  ["navSubmit", "navMyClaims", "navReview", "navUsers", "topNewClaimBtn"].forEach(id => {
+    $(id).classList.add("hidden");
+  });
+
+  if (currentUser.role === "EMPLOYEE") {
+    $("navSubmit").classList.remove("hidden");
+    $("navMyClaims").classList.remove("hidden");
+    $("topNewClaimBtn").classList.remove("hidden");
+  }
+
+  if (currentUser.role === "MANAGER") {
+    $("navReview").classList.remove("hidden");
+  }
+
+  if (currentUser.role === "ADMIN") {
+    $("navReview").classList.remove("hidden");
+    $("navUsers").classList.remove("hidden");
   }
 }
 
-/* EMPLOYEE */
+function showPage(pageId) {
+  document.querySelectorAll(".page-section").forEach(p => p.classList.add("hidden"));
+  $(pageId).classList.remove("hidden");
+
+  document.querySelectorAll(".nav-link").forEach(n => n.classList.remove("active"));
+
+  if (pageId === "dashboardPage") $("navDashboard").classList.add("active");
+  if (pageId === "submitPage") $("navSubmit").classList.add("active");
+  if (pageId === "myClaimsPage") {
+    $("navMyClaims").classList.add("active");
+    loadMyClaims();
+  }
+  if (pageId === "reviewPage") {
+    $("navReview").classList.add("active");
+    loadReviewClaims();
+  }
+  if (pageId === "usersPage") {
+    $("navUsers").classList.add("active");
+    loadUsers();
+  }
+
+  const titles = {
+    dashboardPage: "Dashboard",
+    submitPage: "Submit Claim",
+    myClaimsPage: "My Claims",
+    reviewPage: "Review Claims",
+    usersPage: "Users",
+    profilePage: "Profile"
+  };
+
+  $("pageTitle").innerText = titles[pageId] || "Dashboard";
+}
+
+function badge(status) {
+  const cls = {
+    SUBMITTED: "badge-submitted",
+    APPROVED: "badge-approved",
+    REJECTED: "badge-rejected"
+  }[status] || "";
+
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+
+function currency(value) {
+  return "₹" + Number(value || 0).toLocaleString("en-IN");
+}
+
+async function loadDashboardClaims() {
+  try {
+    let data;
+
+    if (currentUser.role === "EMPLOYEE") {
+      data = await request(`/employee/claims/${currentUser.id}?page=0&size=100`);
+    } else {
+      data = await request(`/reviewer/claims?reviewerId=${currentUser.id}&page=0&size=100`);
+    }
+
+    dashboardClaims = data.content || data.data?.content || data.data || data;
+    renderDashboardStats(dashboardClaims);
+    renderDashboardClaims(dashboardClaims);
+  } catch (e) {
+    $("dashboardClaimsBody").innerHTML = `<tr><td colspan="6">Error loading claims</td></tr>`;
+  }
+}
+
+function renderDashboardStats(claims) {
+  const total = claims.length;
+  const submitted = claims.filter(c => c.status === "SUBMITTED").length;
+  const approved = claims.filter(c => c.status === "APPROVED").length;
+  const amount = claims
+    .filter(c => c.status === "APPROVED")
+    .reduce((s, c) => s + Number(c.amount), 0);
+
+  $("statTotal").innerText = total;
+  $("statSubmitted").innerText = submitted;
+  $("statApproved").innerText = approved;
+  $("statAmount").innerText = currency(amount);
+}
+
+function renderDashboardClaims(claims) {
+  const body = $("dashboardClaimsBody");
+
+  if (!claims || claims.length === 0) {
+    body.innerHTML = `<tr><td colspan="6">No claims found</td></tr>`;
+    return;
+  }
+
+  body.innerHTML = claims.slice(0, 8).map(c => `
+    <tr>
+      <td>${c.id}</td>
+      <td>${c.description}</td>
+      <td>${currency(c.amount)}</td>
+      <td>${badge(c.status)}</td>
+      <td>${c.claimDate}</td>
+      <td>${c.reviewerComment || "-"}</td>
+    </tr>
+  `).join("");
+}
+
+function filterDashboardClaims(status) {
+  document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+
+  if (status === "ALL") {
+    renderDashboardClaims(dashboardClaims);
+  } else {
+    renderDashboardClaims(dashboardClaims.filter(c => c.status === status));
+  }
+}
 
 async function submitClaim() {
-  const user = getLoggedInUser();
-
-  if (!user) {
-    showToast("Please login first", true);
-    return;
-  }
-
   const body = {
-    amount: Number(document.getElementById("claimAmount").value),
-    claimDate: document.getElementById("claimDate").value,
-    description: document.getElementById("claimDescription").value.trim()
+    amount: Number($("claimAmount").value),
+    claimDate: $("claimDate").value,
+    description: $("claimDescription").value.trim()
   };
 
   if (!body.amount || body.amount <= 0 || !body.claimDate || !body.description) {
-    showToast("All fields required and amount must be positive", true);
+    toast("All fields required and amount must be positive", "error");
     return;
   }
 
   try {
-    const response = await fetch(`${BASE_URL}/api/employee/claims/${user.id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      showToast(data.message || "Failed to submit claim", true);
-      return;
-    }
-
-    document.getElementById("claimAmount").value = "";
-    document.getElementById("claimDate").value = "";
-    document.getElementById("claimDescription").value = "";
-
-    showToast("Claim submitted successfully");
-    loadMyClaims();
-  } catch {
-    showToast("Error while submitting claim", true);
+    await request(`/employee/claims/${currentUser.id}`, "POST", body);
+    $("claimAmount").value = "";
+    $("claimDate").value = "";
+    $("claimDescription").value = "";
+    toast("Claim submitted successfully");
+    loadDashboardClaims();
+  } catch (e) {
+    toast(e.message, "error");
   }
 }
 
 async function loadMyClaims() {
-  const user = getLoggedInUser();
-
-  if (!user) {
-    return;
-  }
-
   try {
-    const response = await fetch(
-      `${BASE_URL}/api/employee/claims/${user.id}?page=${employeePage}&size=${pageSize}`
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      showToast(data.message || "Failed to load claims", true);
-      return;
-    }
-
+    const data = await request(`/employee/claims/${currentUser.id}?page=${employeePage}&size=${pageSize}`);
     const claims = data.content || data.data?.content || data.data || data;
-    renderMyClaims(claims);
-
-    const pageText = document.getElementById("employeePageText");
-    if (pageText) {
-      pageText.innerText = `Page ${employeePage}`;
-    }
+    renderSimpleClaims(claims, "myClaimsWrap");
+    $("employeePageText").innerText = `Page ${employeePage}`;
   } catch {
-    showToast("Error while loading my claims", true);
+    $("myClaimsWrap").innerHTML = `<div class="empty-state">Error while loading my claims</div>`;
   }
 }
 
-function renderMyClaims(claims) {
-  const wrap = document.getElementById("myClaimsWrap");
-
-  if (!wrap) {
-    return;
-  }
+function renderSimpleClaims(claims, wrapId) {
+  const wrap = $(wrapId);
 
   if (!claims || claims.length === 0) {
-    wrap.innerHTML = `<div class="no-data">No claims found</div>`;
+    wrap.innerHTML = `<div class="empty-state">No claims found</div>`;
     return;
   }
 
-  let html = `
+  wrap.innerHTML = `
     <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Comment</th>
+          <th>ID</th><th>Description</th><th>Amount</th><th>Status</th><th>Date</th><th>Comment</th>
         </tr>
       </thead>
       <tbody>
+        ${claims.map(c => `
+          <tr>
+            <td>${c.id}</td>
+            <td>${c.description}</td>
+            <td>${currency(c.amount)}</td>
+            <td>${badge(c.status)}</td>
+            <td>${c.claimDate}</td>
+            <td>${c.reviewerComment || "-"}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
   `;
-
-  claims.forEach(claim => {
-    html += `
-      <tr>
-        <td>${claim.id}</td>
-        <td>${claim.amount}</td>
-        <td>${claim.claimDate}</td>
-        <td>${claim.description}</td>
-        <td>${claim.status}</td>
-        <td>${claim.reviewerComment || "-"}</td>
-      </tr>
-    `;
-  });
-
-  html += `</tbody></table>`;
-  wrap.innerHTML = html;
 }
 
 function nextEmployeePage() {
@@ -384,255 +360,193 @@ function prevEmployeePage() {
   }
 }
 
-/* MANAGER / REVIEWER */
-
-async function loadAssignedClaims() {
-  const user = getLoggedInUser();
-
-  if (!user) {
-    return;
-  }
-
+async function loadReviewClaims() {
   try {
-    const response = await fetch(
-      `${BASE_URL}/api/reviewer/claims?reviewerId=${user.id}&page=${managerPage}&size=${pageSize}`
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      showToast(data.message || "Failed to load assigned claims", true);
-      return;
-    }
-
+    const data = await request(`/reviewer/claims?reviewerId=${currentUser.id}&page=${reviewPage}&size=${pageSize}`);
     const claims = data.content || data.data?.content || data.data || data;
-    renderClaimsTable(claims, "claimsWrap");
-
-    const pageText = document.getElementById("managerPageText");
-    if (pageText) {
-      pageText.innerText = `Page ${managerPage}`;
-    }
+    renderReviewClaims(claims);
+    $("reviewPageText").innerText = `Page ${reviewPage}`;
   } catch {
-    showToast("Error while loading assigned claims", true);
+    $("reviewClaimsWrap").innerHTML = `<div class="empty-state">Error while loading claims</div>`;
   }
 }
 
-function renderClaimsTable(claims, wrapId) {
-  const wrap = document.getElementById(wrapId);
-
-  if (!wrap) {
-    return;
-  }
+function renderReviewClaims(claims) {
+  const wrap = $("reviewClaimsWrap");
 
   if (!claims || claims.length === 0) {
-    wrap.innerHTML = `<div class="no-data">No claims found</div>`;
+    wrap.innerHTML = `<div class="empty-state">No claims found</div>`;
     return;
   }
 
-  let html = `
+  wrap.innerHTML = `
     <table>
       <thead>
         <tr>
-          <th>Claim ID</th>
-          <th>Employee ID</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Description</th>
-          <th>Status</th>
-          <th>Comment</th>
-          <th>Action</th>
+          <th>ID</th><th>Employee</th><th>Description</th><th>Amount</th><th>Status</th><th>Comment</th><th>Action</th>
         </tr>
       </thead>
       <tbody>
+        ${claims.map(c => {
+          const disabled = c.status !== "SUBMITTED" ? "disabled" : "";
+          return `
+            <tr>
+              <td>${c.id}</td>
+              <td>${c.employeeId}</td>
+              <td>${c.description}</td>
+              <td>${currency(c.amount)}</td>
+              <td>${badge(c.status)}</td>
+              <td><input class="review-input" id="comment-${c.id}" value="${c.reviewerComment || ""}" ${disabled}></td>
+              <td>
+                <button class="approve-btn" onclick="approveClaim(${c.id})" ${disabled}>Approve</button>
+                <button class="reject-btn" onclick="rejectClaim(${c.id})" ${disabled}>Reject</button>
+              </td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    </table>
   `;
-
-  claims.forEach(claim => {
-    const isReviewed = claim.status !== "SUBMITTED";
-    const disabled = isReviewed ? "disabled" : "";
-    const savedComment = claim.reviewerComment || "";
-
-    html += `
-      <tr>
-        <td>${claim.id}</td>
-        <td>${claim.employeeId ?? "-"}</td>
-        <td>${claim.amount}</td>
-        <td>${claim.claimDate}</td>
-        <td>${claim.description}</td>
-        <td>${claim.status}</td>
-        <td>
-          <input 
-            class="small-input" 
-            id="comment-${claim.id}" 
-            placeholder="Add comment"
-            value="${savedComment}"
-            ${disabled}
-          />
-        </td>
-        <td>
-          <button class="approve-btn" onclick="approveClaim(${claim.id})" ${disabled}>
-            Approve
-          </button>
-          <button class="reject-btn" onclick="rejectClaim(${claim.id})" ${disabled}>
-            Reject
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-
-  html += `</tbody></table>`;
-  wrap.innerHTML = html;
 }
 
 async function approveClaim(claimId) {
-  const user = getLoggedInUser();
-
-  if (!user) {
-    showToast("Please login first", true);
-    return;
-  }
-
-  const commentInput = document.getElementById(`comment-${claimId}`);
-  const comment = commentInput ? commentInput.value.trim() : "";
+  const comment = $(`comment-${claimId}`).value.trim();
 
   try {
-    const response = await fetch(
-      `${BASE_URL}/api/reviewer/claims/${claimId}/approve?reviewerId=${user.id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ comment })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      showToast(data.message || "Failed to approve claim", true);
-      return;
-    }
-
-    showToast("Claim approved successfully");
-
-    if (user.role === "ADMIN") {
-      loadAdminClaims();
-    } else {
-      loadAssignedClaims();
-    }
-  } catch {
-    showToast("Error while approving claim", true);
+    await request(`/reviewer/claims/${claimId}/approve?reviewerId=${currentUser.id}`, "PUT", { comment });
+    toast("Claim approved successfully");
+    loadReviewClaims();
+    loadDashboardClaims();
+  } catch (e) {
+    toast(e.message, "error");
   }
 }
 
 async function rejectClaim(claimId) {
-  const user = getLoggedInUser();
-
-  if (!user) {
-    showToast("Please login first", true);
-    return;
-  }
-
-  const commentInput = document.getElementById(`comment-${claimId}`);
-  const comment = commentInput ? commentInput.value.trim() : "";
+  const comment = $(`comment-${claimId}`).value.trim();
 
   if (!comment) {
-    showToast("Comment is required for rejection", true);
+    toast("Comment is required for rejection", "error");
     return;
   }
 
   try {
-    const response = await fetch(
-      `${BASE_URL}/api/reviewer/claims/${claimId}/reject?reviewerId=${user.id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ comment })
-      }
-    );
+    await request(`/reviewer/claims/${claimId}/reject?reviewerId=${currentUser.id}`, "PUT", { comment });
+    toast("Claim rejected successfully");
+    loadReviewClaims();
+    loadDashboardClaims();
+  } catch (e) {
+    toast(e.message, "error");
+  }
+}
 
-    const data = await response.json();
+function nextReviewPage() {
+  reviewPage++;
+  loadReviewClaims();
+}
 
-    if (!response.ok) {
-      showToast(data.message || "Failed to reject claim", true);
+function prevReviewPage() {
+  if (reviewPage > 0) {
+    reviewPage--;
+    loadReviewClaims();
+  }
+}
+
+async function createUser() {
+  const body = {
+    name: $("userName").value.trim(),
+    email: $("userEmail").value.trim(),
+    password: $("userPassword").value.trim(),
+    role: $("userRole").value
+  };
+
+  const managerId = $("userManagerId").value.trim();
+
+  if (!body.name || !body.email || !body.password) {
+    toast("All fields required", "error");
+    return;
+  }
+
+  if (!body.email.endsWith("@company.com")) {
+    toast("Only company email allowed", "error");
+    return;
+  }
+
+  if (managerId) {
+    body.managerId = Number(managerId);
+  }
+
+  try {
+    await request("/admin/users", "POST", body);
+    toast("User created successfully");
+    loadUsers();
+  } catch (e) {
+    toast(e.message, "error");
+  }
+}
+
+async function loadUsers() {
+  try {
+    const data = await request("/admin/users");
+    const users = data.data || data;
+
+    if (!users || users.length === 0) {
+      $("usersWrap").innerHTML = `<div class="empty-state">No users found</div>`;
       return;
     }
 
-    showToast("Claim rejected successfully");
-
-    if (user.role === "ADMIN") {
-      loadAdminClaims();
-    } else {
-      loadAssignedClaims();
-    }
+    $("usersWrap").innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Manager ID</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map(u => `
+            <tr>
+              <td>${u.id}</td>
+              <td>${u.name}</td>
+              <td>${u.email}</td>
+              <td>${u.role}</td>
+              <td>${u.managerId || "-"}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">Delete</button></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
   } catch {
-    showToast("Error while rejecting claim", true);
+    $("usersWrap").innerHTML = `<div class="empty-state">Error loading users</div>`;
   }
 }
 
-function nextManagerPage() {
-  managerPage++;
-  loadAssignedClaims();
-}
-
-function prevManagerPage() {
-  if (managerPage > 0) {
-    managerPage--;
-    loadAssignedClaims();
+async function deleteUser(id) {
+  try {
+    await request(`/admin/users/${id}`, "DELETE");
+    toast("User deleted successfully");
+    loadUsers();
+  } catch (e) {
+    toast(e.message, "error");
   }
 }
 
-/* ADMIN FALLBACK CLAIMS */
+async function assignManager() {
+  const employeeId = $("assignEmployeeId").value;
+  const managerId = $("assignManagerId").value;
 
-async function loadAdminClaims() {
-  const user = getLoggedInUser();
-
-  if (!user || user.role !== "ADMIN") {
+  if (!employeeId || !managerId) {
+    toast("Employee ID and Manager ID required", "error");
     return;
   }
 
   try {
-    const response = await fetch(
-      `${BASE_URL}/api/reviewer/claims?reviewerId=${user.id}&page=${adminPage}&size=${pageSize}`
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      showToast(data.message || "Failed to load admin claims", true);
-      return;
-    }
-
-    const claims = data.content || data.data?.content || data.data || data;
-    renderClaimsTable(claims, "adminClaimsWrap");
-
-    const pageText = document.getElementById("adminPageText");
-    if (pageText) {
-      pageText.innerText = `Page ${adminPage}`;
-    }
-  } catch {
-    showToast("Error while loading admin claims", true);
+    await request(`/admin/users/${employeeId}/manager/${managerId}`, "PUT");
+    toast("Manager assigned successfully");
+    loadUsers();
+  } catch (e) {
+    toast(e.message, "error");
   }
 }
 
-function nextAdminPage() {
-  adminPage++;
-  loadAdminClaims();
-}
-
-function prevAdminPage() {
-  if (adminPage > 0) {
-    adminPage--;
-    loadAdminClaims();
-  }
-}
-
-window.onload = function () {
-  const user = getLoggedInUser();
-
-  if (user) {
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("dashboardSection").classList.remove("hidden");
-    document.getElementById("welcomeText").innerText = `Welcome, ${user.name} (${user.role})`;
-    showRolePanel(user.role);
-  }
-};
+window.onload = initApp;

@@ -4,219 +4,293 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reimbursement Portal</title>
-   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="toast" class="toast hidden"></div>
 
-  <!-- LOGIN SECTION -->
-  <section id="loginSection" class="login-page">
-    <div class="login-card">
-      <div class="brand-block">
-        <h1>Reimbursement Portal</h1>
-        <p>Login to continue</p>
+<section id="loginPage" class="login-page">
+  <div class="login-card">
+
+    <div class="login-logo">
+      <div class="logo-mark" style="width:40px;height:40px;border-radius:12px;">
+        <svg viewBox="0 0 20 20" fill="none" width="22" height="22">
+          <rect x="3" y="5" width="14" height="11" rx="2.5" fill="white" fill-opacity=".9"/>
+          <path d="M6 9.5h8M6 12.5h5" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M6.5 3L10 5.5 13.5 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
-
-      <div class="form-group">
-        <label for="loginEmail">Email</label>
-        <input type="email" id="loginEmail" placeholder="Enter your company email" />
+      <div>
+        <div class="logo-text" style="font-size:18px;">Reimburse<span>.</span></div>
+        <div style="font-size:11px;color:var(--text3);">Reimbursement Portal</div>
       </div>
-
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" placeholder="Enter your password" />
-      </div>
-
-      <button type="button" class="primary-btn" onclick="login()">Login</button>
-      <p id="loginMessage" class="error-text"></p>
     </div>
-  </section>
 
-  <!-- DASHBOARD SECTION -->
-  <section id="dashboardSection" class="dashboard hidden">
-    <nav class="navbar">
-      <div class="nav-left">
-        <h2>Reimbursement Portal</h2>
-        <span id="welcomeText" class="welcome-text"></span>
+    <h1 class="login-heading">Welcome back</h1>
+    <p class="login-subheading">Sign in with your company email to continue.</p>
+
+    <div id="errorBox"
+      style="display:none;background:var(--danger-light);color:#A32D2D;border:1px solid #F7C1C1;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;">
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label" for="email">Email address <span>*</span></label>
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="4" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M2 6l6 4 6-4" stroke="currentColor" stroke-width="1.3"/>
+          </svg>
+          <input class="form-control" type="email" id="email" placeholder="you@company.com" required autocomplete="email"/>
+        </div>
+        <div class="form-error" id="emailError">Please use company email like name@company.com</div>
       </div>
 
-      <div class="nav-right">
-        <button type="button" id="adminNavBtn" class="nav-btn hidden" onclick="showPanel('adminPanel')">Admin</button>
-        <button type="button" id="employeeNavBtn" class="nav-btn hidden" onclick="showPanel('employeePanel')">Employee</button>
-        <button type="button" id="managerNavBtn" class="nav-btn hidden" onclick="showPanel('managerPanel')">Manager</button>
-        <button type="button" class="danger-btn" onclick="logout()">Logout</button>
+      <div class="form-group">
+        <label class="form-label" for="password">Password <span>*</span></label>
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 16 16" fill="none">
+            <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <input class="form-control" type="password" id="password" placeholder="••••••••" required autocomplete="current-password"/>
+          <button type="button" class="password-toggle" onclick="togglePassword()" id="toggleBtn">
+            <svg id="eyeIcon" viewBox="0 0 16 16" fill="none">
+              <path d="M1.5 8C3 5 5.3 3.5 8 3.5S13 5 14.5 8c-1.5 3-3.8 4.5-6.5 4.5S3 11 1.5 8z" stroke="currentColor" stroke-width="1.3"/>
+              <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/>
+            </svg>
+          </button>
+        </div>
       </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer;">
+          <input type="checkbox" id="rememberMe" style="accent-color:var(--accent);width:14px;height:14px;"/>
+          Remember me
+        </label>
+        <span style="font-size:13px;color:var(--accent);font-weight:500;">Basic login</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full" id="loginBtn" style="justify-content:center;padding:11px;">
+        Sign in
+      </button>
+    </form>
+
+    <div class="role-hint">
+      <strong>Domain restriction:</strong> Only <span class="domain-tag">@company.com</span> emails are allowed.
+    </div>
+
+  </div>
+</section>
+
+<section id="appPage" class="app-shell hidden">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">₹</div>
+      <div class="logo-text">Reimburse<span>.</span></div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+
+      <button class="nav-link active" id="navDashboard" onclick="showPage('dashboardPage')">Dashboard</button>
+      <button class="nav-link hidden" id="navSubmit" onclick="showPage('submitPage')">Submit Claim</button>
+      <button class="nav-link hidden" id="navMyClaims" onclick="showPage('myClaimsPage')">My Claims</button>
+      <button class="nav-link hidden" id="navReview" onclick="showPage('reviewPage')">Review Claims</button>
+      <button class="nav-link hidden" id="navUsers" onclick="showPage('usersPage')">Users</button>
+
+      <div class="nav-section-label">Account</div>
+      <button class="nav-link" onclick="showPage('profilePage')">Profile</button>
     </nav>
 
-    <main class="main-content">
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="avatar" id="userAvatar">U</div>
+        <div>
+          <div class="user-name" id="sideUserName">User</div>
+          <div class="user-role" id="sideUserRole">Role</div>
+        </div>
+      </div>
+    </div>
+  </aside>
 
-      <!-- ADMIN PANEL -->
-      <section id="adminPanel" class="panel hidden">
-        <div class="panel-header">
-          <h3>Admin Dashboard</h3>
-          <p>Create users, assign managers, and review fallback claims.</p>
+  <main class="main-content">
+    <div class="topbar">
+      <div class="topbar-title" id="pageTitle">Dashboard</div>
+      <input class="search-input" id="searchInput" placeholder="Search claims..." />
+      <button class="btn btn-primary hidden" id="topNewClaimBtn" onclick="showPage('submitPage')">+ New Claim</button>
+      <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="page-body">
+
+      <section id="dashboardPage" class="page-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Total claims</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value amber" id="statSubmitted">0</div>
+            <div class="stat-label">Pending review</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value green" id="statApproved">0</div>
+            <div class="stat-label">Approved</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value blue" id="statAmount">₹0</div>
+            <div class="stat-label">Total reimbursed</div>
+          </div>
         </div>
 
         <div class="card">
-          <h4>Create User</h4>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="userName">Name</label>
-              <input type="text" id="userName" placeholder="Enter full name" />
+          <div class="card-header">
+            <div class="card-title">Recent Claims</div>
+            <div class="filter-row">
+              <button class="filter-chip active" onclick="filterDashboardClaims('ALL')">All</button>
+              <button class="filter-chip" onclick="filterDashboardClaims('SUBMITTED')">Submitted</button>
+              <button class="filter-chip" onclick="filterDashboardClaims('APPROVED')">Approved</button>
+              <button class="filter-chip" onclick="filterDashboardClaims('REJECTED')">Rejected</button>
             </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Claim ID</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Comment</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardClaimsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-            <div class="form-group">
-              <label for="userEmail">Email</label>
-              <input type="email" id="userEmail" placeholder="Enter company email" />
+      <section id="submitPage" class="page-section hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Submit Claim</div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Amount</label>
+                <input class="form-control" id="claimAmount" type="number" placeholder="Enter amount" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input class="form-control" id="claimDate" type="date" />
+              </div>
             </div>
-
             <div class="form-group">
-              <label for="userPassword">Password</label>
-              <input type="password" id="userPassword" placeholder="Enter password" />
+              <label class="form-label">Description</label>
+              <textarea class="form-control" id="claimDescription" placeholder="Enter claim details"></textarea>
             </div>
+            <button class="btn btn-primary" onclick="submitClaim()">Submit Claim</button>
+          </div>
+        </div>
+      </section>
 
-            <div class="form-group">
-              <label for="userRole">Role</label>
-              <select id="userRole">
+      <section id="myClaimsPage" class="page-section hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">My Claims</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadMyClaims()">Refresh</button>
+          </div>
+          <div class="table-wrap" id="myClaimsWrap"></div>
+          <div class="pagination">
+            <button class="page-btn" onclick="prevEmployeePage()">‹</button>
+            <span class="page-info" id="employeePageText">Page 0</span>
+            <button class="page-btn" onclick="nextEmployeePage()">›</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="reviewPage" class="page-section hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Review Claims</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadReviewClaims()">Refresh</button>
+          </div>
+          <div class="table-wrap" id="reviewClaimsWrap"></div>
+          <div class="pagination">
+            <button class="page-btn" onclick="prevReviewPage()">‹</button>
+            <span class="page-info" id="reviewPageText">Page 0</span>
+            <button class="page-btn" onclick="nextReviewPage()">›</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="usersPage" class="page-section hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Create User</div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <input class="form-control" id="userName" placeholder="Name" />
+              <input class="form-control" id="userEmail" placeholder="Email" />
+            </div>
+            <div class="form-row">
+              <input class="form-control" id="userPassword" placeholder="Password" />
+              <select class="form-control" id="userRole">
                 <option value="ADMIN">ADMIN</option>
                 <option value="MANAGER">MANAGER</option>
                 <option value="EMPLOYEE">EMPLOYEE</option>
               </select>
             </div>
-
-            <div class="form-group full-width">
-              <label for="userManagerId">Manager ID</label>
-              <input type="number" id="userManagerId" placeholder="Optional: required only for employee" />
-            </div>
-          </div>
-
-          <button type="button" class="primary-btn" onclick="createUser()">Create User</button>
-        </div>
-
-        <div class="card">
-          <h4>Assign Manager</h4>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="assignEmployeeId">Employee ID</label>
-              <input type="number" id="assignEmployeeId" placeholder="Enter employee id" />
-            </div>
-
-            <div class="form-group">
-              <label for="assignManagerId">Manager ID</label>
-              <input type="number" id="assignManagerId" placeholder="Enter manager id" />
-            </div>
-          </div>
-
-          <button type="button" class="primary-btn" onclick="assignManager()">Assign Manager</button>
-        </div>
-
-        <div class="card">
-          <div class="section-topbar">
-            <h4>All Users</h4>
-            <button type="button" class="secondary-btn" onclick="loadUsers()">Refresh Users</button>
-          </div>
-
-          <div id="usersWrap" class="table-wrap">
-            <div class="no-data">No users loaded yet.</div>
+            <input class="form-control" id="userManagerId" type="number" placeholder="Manager ID optional" />
+            <br />
+            <button class="btn btn-primary" onclick="createUser()">Create User</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="section-topbar">
-            <h4>Fallback Claims / Admin Claims</h4>
-            <button type="button" class="secondary-btn" onclick="loadAdminClaims()">Load Claims</button>
+          <div class="card-header">
+            <div class="card-title">Assign Manager</div>
           </div>
-
-          <div id="adminClaimsWrap" class="table-wrap">
-            <div class="no-data">No admin claims loaded yet.</div>
+          <div class="card-body">
+            <div class="form-row">
+              <input class="form-control" id="assignEmployeeId" type="number" placeholder="Employee ID" />
+              <input class="form-control" id="assignManagerId" type="number" placeholder="Manager ID" />
+            </div>
+            <button class="btn btn-primary" onclick="assignManager()">Assign Manager</button>
           </div>
+        </div>
 
-          <div class="pagination">
-            <button type="button" class="secondary-btn" onclick="prevAdminPage()">Previous</button>
-            <span id="adminPageText">Page 0</span>
-            <button type="button" class="secondary-btn" onclick="nextAdminPage()">Next</button>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All Users</div>
+            <button class="btn btn-secondary btn-sm" onclick="loadUsers()">Refresh</button>
+          </div>
+          <div class="table-wrap" id="usersWrap"></div>
+        </div>
+      </section>
+
+      <section id="profilePage" class="page-section hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Profile</div>
+          </div>
+          <div class="card-body">
+            <p><b>Name:</b> <span id="profileName"></span></p>
+            <p><b>Email:</b> <span id="profileEmail"></span></p>
+            <p><b>Role:</b> <span id="profileRole"></span></p>
           </div>
         </div>
       </section>
 
-      <!-- EMPLOYEE PANEL -->
-      <section id="employeePanel" class="panel hidden">
-        <div class="panel-header">
-          <h3>Employee Dashboard</h3>
-          <p>Submit reimbursement claims and track status.</p>
-        </div>
+    </div>
+  </main>
+</section>
 
-        <div class="card">
-          <h4>Submit Claim</h4>
+<div id="toastContainer" class="toast-container"></div>
 
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="claimAmount">Amount</label>
-              <input type="number" id="claimAmount" placeholder="Enter amount" />
-            </div>
-
-            <div class="form-group">
-              <label for="claimDate">Date</label>
-              <input type="date" id="claimDate" />
-            </div>
-
-            <div class="form-group full-width">
-              <label for="claimDescription">Description</label>
-              <textarea id="claimDescription" rows="5" placeholder="Enter claim details"></textarea>
-            </div>
-          </div>
-
-          <button type="button" class="primary-btn" onclick="submitClaim()">Submit Claim</button>
-        </div>
-
-        <div class="card">
-          <div class="section-topbar">
-            <h4>My Claims</h4>
-            <button type="button" class="secondary-btn" onclick="loadMyClaims()">Refresh Claims</button>
-          </div>
-
-          <div id="myClaimsWrap" class="table-wrap">
-            <div class="no-data">No claims loaded yet.</div>
-          </div>
-
-          <div class="pagination">
-            <button type="button" class="secondary-btn" onclick="prevEmployeePage()">Previous</button>
-            <span id="employeePageText">Page 0</span>
-            <button type="button" class="secondary-btn" onclick="nextEmployeePage()">Next</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- MANAGER PANEL -->
-      <section id="managerPanel" class="panel hidden">
-        <div class="panel-header">
-          <h3>Manager Dashboard</h3>
-          <p>View assigned claims and approve/reject them.</p>
-        </div>
-
-        <div class="card">
-          <div class="section-topbar">
-            <h4>Assigned Claims</h4>
-            <button type="button" class="secondary-btn" onclick="loadAssignedClaims()">Load Claims</button>
-          </div>
-
-          <div id="claimsWrap" class="table-wrap">
-            <div class="no-data">No assigned claims loaded yet.</div>
-          </div>
-
-          <div class="pagination">
-            <button type="button" class="secondary-btn" onclick="prevManagerPage()">Previous</button>
-            <span id="managerPageText">Page 0</span>
-            <button type="button" class="secondary-btn" onclick="nextManagerPage()">Next</button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-  </section>
-
-   <script src="js/app.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
