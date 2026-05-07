@@ -7,14 +7,24 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Nucleusteq" />
-        <module name="springboot" />
         <module name="todoapp" />
+        <module name="springboot" />
+      </profile>
+      <profile name="Annotation profile for reimbursementportal" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="reimbursementportal" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Nucleusteq" options="-parameters" />
+      <module name="reimbursementportal" options="-parameters" />
       <module name="springboot" options="-parameters" />
       <module name="todoapp" options="-parameters" />
     </option>
