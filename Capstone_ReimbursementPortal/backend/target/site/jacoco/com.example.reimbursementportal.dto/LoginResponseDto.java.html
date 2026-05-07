@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginResponseDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">reimbursementportal</a> &gt; <a href="index.source.html" class="el_package">com.example.reimbursementportal.dto</a> &gt; <span class="el_source">LoginResponseDto.java</span></div><h1>LoginResponseDto.java</h1><pre class="source lang-java linenums">package com.example.reimbursementportal.dto;
+
+import com.example.reimbursementportal.enums.Role;
+
+public class LoginResponseDto {
+
+    private Long id;
+    private String name;
+    private String email;
+    private Role role;
+    private String message;
+
+<span class="nc" id="L13">    public LoginResponseDto() {</span>
+<span class="nc" id="L14">    }</span>
+
+<span class="fc" id="L16">    public LoginResponseDto(Long id, String name, String email, Role role, String message) {</span>
+<span class="fc" id="L17">        this.id = id;</span>
+<span class="fc" id="L18">        this.name = name;</span>
+<span class="fc" id="L19">        this.email = email;</span>
+<span class="fc" id="L20">        this.role = role;</span>
+<span class="fc" id="L21">        this.message = message;</span>
+<span class="fc" id="L22">    }</span>
+
+    public Long getId() {
+<span class="fc" id="L25">        return id;</span>
+    }
+
+    public String getName() {
+<span class="nc" id="L29">        return name;</span>
+    }
+
+    public String getEmail() {
+<span class="fc" id="L33">        return email;</span>
+    }
+
+    public Role getRole() {
+<span class="fc" id="L37">        return role;</span>
+    }
+
+    public String getMessage() {
+<span class="nc" id="L41">        return message;</span>
+    }
+
+    public void setId(Long id) {
+<span class="nc" id="L45">        this.id = id;</span>
+<span class="nc" id="L46">    }</span>
+
+    public void setName(String name) {
+<span class="nc" id="L49">        this.name = name;</span>
+<span class="nc" id="L50">    }</span>
+
+    public void setEmail(String email) {
+<span class="nc" id="L53">        this.email = email;</span>
+<span class="nc" id="L54">    }</span>
+
+    public void setRole(Role role) {
+<span class="nc" id="L57">        this.role = role;</span>
+<span class="nc" id="L58">    }</span>
+
+    public void setMessage(String message) {
+<span class="nc" id="L61">        this.message = message;</span>
+<span class="nc" id="L62">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

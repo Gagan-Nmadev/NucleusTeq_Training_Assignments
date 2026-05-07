@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployeeClaimController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">reimbursementportal</a> &gt; <a href="index.source.html" class="el_package">com.example.reimbursementportal.controller</a> &gt; <span class="el_source">EmployeeClaimController.java</span></div><h1>EmployeeClaimController.java</h1><pre class="source lang-java linenums">package com.example.reimbursementportal.controller;
+
+import com.example.reimbursementportal.dto.ClaimRequestDto;
+import com.example.reimbursementportal.dto.ClaimResponseDto;
+import com.example.reimbursementportal.service.ClaimService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/employee/claims&quot;)
+@CrossOrigin(origins = {&quot;http://127.0.0.1:5500&quot;, &quot;http://localhost:5500&quot;})
+public class EmployeeClaimController {
+
+    private final ClaimService claimService;
+
+<span class="fc" id="L19">    public EmployeeClaimController(ClaimService claimService) {</span>
+<span class="fc" id="L20">        this.claimService = claimService;</span>
+<span class="fc" id="L21">    }</span>
+
+    @PostMapping(&quot;/{employeeId}&quot;)
+    public ResponseEntity&lt;ClaimResponseDto&gt; submitClaim(
+            @PathVariable Long employeeId,
+            @Valid @RequestBody ClaimRequestDto claimRequestDto) {
+
+<span class="fc" id="L28">        ClaimResponseDto response = claimService.submitClaim(employeeId, claimRequestDto);</span>
+<span class="fc" id="L29">        return new ResponseEntity&lt;&gt;(response, HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping(&quot;/{employeeId}&quot;)
+    public ResponseEntity&lt;Page&lt;ClaimResponseDto&gt;&gt; getClaimsByEmployee(
+            @PathVariable Long employeeId,
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;5&quot;) int size) {
+
+<span class="fc" id="L38">        return ResponseEntity.ok(claimService.getClaimsByEmployee(employeeId, page, size));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

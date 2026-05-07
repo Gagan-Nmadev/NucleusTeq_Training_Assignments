@@ -20,6 +20,9 @@
         <module name="reimbursementportal" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="reimbursementportal" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
