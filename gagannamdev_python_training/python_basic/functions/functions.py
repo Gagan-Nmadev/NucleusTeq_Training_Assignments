@@ -47,7 +47,7 @@ def main() -> None:
     number = int(input("Enter a number to find square: "))
     print(f"Square = {calculate_square(number)}")
 
-    print("\n" + "-" * 50)
+    print("--------------------------------------------")
 
     # Question 18
     value = input("Enter a string or number: ")
@@ -57,15 +57,14 @@ def main() -> None:
     else:
         print(f"{value} is not a Palindrome.")
 
-    print("\n" + "-" * 50)
+    print("--------------------------------------------")
 
     # Question 19
     number_list = [10, 45, 78, 23, 99, 12]
     print(f"List: {number_list}")
     print(f"Maximum Number: {find_maximum(number_list)}")
 
-    print("\n" + "-" * 50)
-
+    print("--------------------------------------------")
     # Question 20
     print(greet_user())
     print(greet_user("Gagan"))
