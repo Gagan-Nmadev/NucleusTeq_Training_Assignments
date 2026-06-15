@@ -43,10 +43,10 @@ def main() -> None:
     Main function to execute all introduction programs.
     """
     print_welcome_message()
-    print("-" * 50)
+    
 
     display_python_version()
-    print("-" * 50)
+    
 
     get_user_details()
 
