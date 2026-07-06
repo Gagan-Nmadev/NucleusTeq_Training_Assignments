@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.database.connection import client
 from app.api.routers.user_router import router as user_router
 from app.api.routers.admin_router import router as admin_router
+from app.api.routers.project_router import router as project_router
 
 app = FastAPI(title=settings.APP_NAME)
 
@@ -27,3 +28,4 @@ def home():
 
 app.include_router(user_router)
 app.include_router(admin_router)
+app.include_router(project_router)
