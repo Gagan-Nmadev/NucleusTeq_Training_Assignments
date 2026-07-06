@@ -5,8 +5,10 @@ from app.schemas.issue_schema import (
     IssueStatusUpdate,
 )
 from app.services.issue_service import IssueService
-from app.api.dependencies.auth import get_current_admin
-
+from app.api.dependencies.auth import (
+    get_current_admin,
+    get_current_user,
+)
 
 router = APIRouter(
     prefix="/issues",
@@ -26,9 +28,10 @@ def create_issue(
 def update_issue_status(
     issue_id: str,
     status: IssueStatusUpdate,
-    current_admin=Depends(get_current_admin)
+    current_user=Depends(get_current_user)
 ):
     return IssueService.update_issue_status(
         issue_id,
-        status
+        status,
+        current_user
     )

@@ -32,13 +32,25 @@ class IssueService:
         }
 
     @staticmethod
-    def update_issue_status(issue_id: str, status_data):
+    def update_issue_status(
+        issue_id: str,
+        status_data,
+        current_user
+    ):
 
-        issue = IssueRepository.get_issue_by_id(issue_id)
+        issue = IssueRepository.get_issue_by_id(
+            issue_id
+        )
 
         if not issue:
             return {
                 "message": "Issue not found"
+            }
+
+        # ✅ Only assignee can update status
+        if issue["assignee"] != current_user["email"]:
+            return {
+                "message": "Only assignee can update issue status"
             }
 
         current_status = issue["status"]
