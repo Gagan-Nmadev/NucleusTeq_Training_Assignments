@@ -21,3 +21,32 @@ class ProjectRepository:
         return db.projects.find_one(
             {"_id": ObjectId(project_id)}
         )
+
+    @staticmethod
+    def update_project(project_id: str, project_data: dict):
+
+        return db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {
+                "$set": project_data
+            }
+        )
+
+    @staticmethod
+    def delete_project(project_id: str):
+
+        return db.projects.delete_one(
+            {"_id": ObjectId(project_id)}
+        )
+
+    @staticmethod
+    def assign_members(project_id: str, members: list):
+
+        return db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {
+                "$set": {
+                    "members": members
+                }
+            }
+        )

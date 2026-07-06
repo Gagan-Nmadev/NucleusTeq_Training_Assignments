@@ -11,6 +11,10 @@ class ProjectCreate(BaseModel):
 class ProjectUpdate(BaseModel):
     name: str
     description: str
+    members: List[str] = []
+
+
+class AssignMembers(BaseModel):
     members: List[str]
 
 

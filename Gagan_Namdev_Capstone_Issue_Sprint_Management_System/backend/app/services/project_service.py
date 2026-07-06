@@ -56,3 +56,67 @@ class ProjectService:
         project["_id"] = str(project["_id"])
 
         return project
+
+    @staticmethod
+    def update_project(project_id: str, project):
+
+        existing_project = ProjectRepository.get_project_by_id(
+            project_id
+        )
+
+        if not existing_project:
+            return {
+                "message": "Project not found"
+            }
+
+        ProjectRepository.update_project(
+            project_id,
+            {
+                "name": project.name,
+                "description": project.description,
+                "members": project.members
+            }
+        )
+
+        return {
+            "message": "Project updated successfully"
+        }
+
+    @staticmethod
+    def delete_project(project_id: str):
+
+        existing_project = ProjectRepository.get_project_by_id(
+            project_id
+        )
+
+        if not existing_project:
+            return {
+                "message": "Project not found"
+            }
+
+        ProjectRepository.delete_project(project_id)
+
+        return {
+            "message": "Project deleted successfully"
+        }
+
+    @staticmethod
+    def assign_members(project_id: str, data):
+
+        project = ProjectRepository.get_project_by_id(
+            project_id
+        )
+
+        if not project:
+            return {
+                "message": "Project not found"
+            }
+
+        ProjectRepository.assign_members(
+            project_id,
+            data.members
+        )
+
+        return {
+            "message": "Members assigned successfully"
+        }
