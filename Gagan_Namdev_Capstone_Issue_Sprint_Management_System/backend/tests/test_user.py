@@ -14,7 +14,8 @@ def test_register_user():
         json={
             "name": "Test User",
             "email": email,
-            "password": "123456"
+            "password": "123456",
+            "role": "member"
         }
     )
 
@@ -31,7 +32,8 @@ def test_login_user():
         json={
             "name": "Login User",
             "email": email,
-            "password": "123456"
+            "password": "123456",
+            "role": "member"
         }
     )
 
@@ -70,7 +72,8 @@ def test_invalid_password():
         json={
             "name": "Wrong Password",
             "email": email,
-            "password": "123456"
+            "password": "123456",
+            "role": "member"
         }
     )
 
