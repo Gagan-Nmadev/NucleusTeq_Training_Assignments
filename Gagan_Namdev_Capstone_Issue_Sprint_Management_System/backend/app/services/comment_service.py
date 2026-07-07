@@ -48,3 +48,61 @@ class CommentService:
             result.append(comment)
 
         return result
+
+    @staticmethod
+    def update_comment(
+        comment_id: str,
+        comment_data,
+        current_user
+    ):
+
+        comment = CommentRepository.get_comment_by_id(
+            comment_id
+        )
+
+        if not comment:
+            return {
+                "message": "Comment not found"
+            }
+
+        if comment["user_email"] != current_user["email"]:
+            return {
+                "message": "You can edit only your own comments"
+            }
+
+        CommentRepository.update_comment(
+            comment_id,
+            {
+                "comment": comment_data.comment
+            }
+        )
+
+        return {
+            "message": "Comment updated successfully"
+        }
+
+    @staticmethod
+    def delete_comment(
+        comment_id: str,
+        current_user
+    ):
+
+        comment = CommentRepository.get_comment_by_id(
+            comment_id
+        )
+
+        if not comment:
+            return {
+                "message": "Comment not found"
+            }
+
+        if comment["user_email"] != current_user["email"]:
+            return {
+                "message": "You can delete only your own comments"
+            }
+
+        CommentRepository.delete_comment(comment_id)
+
+        return {
+            "message": "Comment deleted successfully"
+        }
