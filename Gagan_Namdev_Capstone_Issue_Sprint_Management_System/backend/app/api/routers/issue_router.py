@@ -35,3 +35,23 @@ def update_issue_status(
         status,
         current_user
     )
+
+
+@router.get("/search/status/{status}")
+def search_by_status(status: str):
+    return IssueService.search_by_status(status)
+
+
+@router.get("/search/priority/{priority}")
+def search_by_priority(priority: str):
+    return IssueService.search_by_priority(priority)
+
+
+@router.get("/search/assignee/{assignee}")
+def search_by_assignee(assignee: str):
+    return IssueService.search_by_assignee(assignee)
+
+
+@router.get("/search/project/{project_id}")
+def search_by_project(project_id: str):
+    return IssueService.search_by_project(project_id)

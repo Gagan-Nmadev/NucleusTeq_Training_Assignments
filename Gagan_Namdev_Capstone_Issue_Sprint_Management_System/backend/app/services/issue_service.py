@@ -47,7 +47,7 @@ class IssueService:
                 "message": "Issue not found"
             }
 
-        # ✅ Only assignee can update status
+        # Only assignee can update status
         if issue["assignee"] != current_user["email"]:
             return {
                 "message": "Only assignee can update issue status"
@@ -77,3 +77,43 @@ class IssueService:
         return {
             "message": "Issue status updated successfully"
         }
+
+    @staticmethod
+    def search_by_status(status: str):
+
+        issues = IssueRepository.get_by_status(status)
+
+        for issue in issues:
+            issue["_id"] = str(issue["_id"])
+
+        return issues
+
+    @staticmethod
+    def search_by_priority(priority: str):
+
+        issues = IssueRepository.get_by_priority(priority)
+
+        for issue in issues:
+            issue["_id"] = str(issue["_id"])
+
+        return issues
+
+    @staticmethod
+    def search_by_assignee(assignee: str):
+
+        issues = IssueRepository.get_by_assignee(assignee)
+
+        for issue in issues:
+            issue["_id"] = str(issue["_id"])
+
+        return issues
+
+    @staticmethod
+    def search_by_project(project_id: str):
+
+        issues = IssueRepository.get_by_project(project_id)
+
+        for issue in issues:
+            issue["_id"] = str(issue["_id"])
+
+        return issues
