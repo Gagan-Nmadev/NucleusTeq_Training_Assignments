@@ -14,12 +14,9 @@ function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-
-        {/* Public Routes */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -64,7 +61,6 @@ function AppRouter() {
             </ProtectedRoute>
           }
         />
-
       </Routes>
     </BrowserRouter>
   );
