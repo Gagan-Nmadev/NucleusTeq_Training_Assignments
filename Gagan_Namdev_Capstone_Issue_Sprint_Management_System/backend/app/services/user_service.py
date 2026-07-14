@@ -17,13 +17,20 @@ class UserService:
         if existing_user:
             return {"message": "Email already registered"}
 
+        allowed_roles = ["member", "viewer"]
+
+        if user.role.lower() not in allowed_roles:
+            return {
+                "message": "Only Member and Viewer registration is allowed"
+            }
+
         hashed_password = hash_password(user.password)
 
         user_data = UserModel.create_user(
             name=user.name,
             email=user.email,
             password=hashed_password,
-            role=user.role,
+            role=user.role.lower(),
         )
 
         UserRepository.create_user(user_data)
@@ -48,12 +55,32 @@ class UserService:
 
         token = create_access_token(
             {
-            "sub": existing_user["email"],
-            "role": existing_user["role"]
+                "sub": existing_user["email"],
+                "role": existing_user["role"],
             }
-        ) 
+        )
 
         return {
             "access_token": token,
             "token_type": "bearer",
+            "user": {
+                "id": str(existing_user["_id"]),
+                "name": existing_user["name"],
+                "email": existing_user["email"],
+                "role": existing_user["role"]
+    }
+}
+
+    @staticmethod
+    def delete_user(user_id: str):
+
+        result = UserRepository.delete_user(user_id)
+
+        if result.deleted_count == 0:
+            return {
+                "message": "User not found"
+            }
+
+        return {
+            "message": "User deleted successfully"
         }

@@ -1,4 +1,5 @@
 from datetime import datetime
+import uuid
 
 
 class ProjectModel:
@@ -10,7 +11,13 @@ class ProjectModel:
         members
     ):
 
+        project_key = (
+            "PROJ_" +
+            uuid.uuid4().hex[:6].upper()
+        )
+
         return {
+            "project_key": project_key,
             "name": name,
             "description": description,
             "members": members,

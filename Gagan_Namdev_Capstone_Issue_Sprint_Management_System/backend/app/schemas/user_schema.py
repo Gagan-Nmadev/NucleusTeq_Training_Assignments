@@ -5,7 +5,7 @@ class UserRegister(BaseModel):
     name: str
     email: EmailStr
     password: str
-    role: str = "member"      # Default role
+    role: str = "member"    # deflt
 
 
 class UserLogin(BaseModel):

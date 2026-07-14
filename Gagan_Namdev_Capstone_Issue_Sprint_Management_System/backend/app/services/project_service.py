@@ -25,7 +25,8 @@ class ProjectService:
         ProjectRepository.create_project(project_data)
 
         return {
-            "message": "Project created successfully"
+            "message": "Project created successfully",
+            "project_key": project_data["project_key"]
         }
 
     @staticmethod
@@ -36,8 +37,37 @@ class ProjectService:
         result = []
 
         for project in projects:
-            project["_id"] = str(project["_id"])
-            result.append(project)
+
+            result.append({
+                "_id": str(project["_id"]),
+                "project_key": project.get("project_key"),
+                "name": project.get("name"),
+                "description": project.get("description"),
+                "members": project.get("members", []),
+                "created_at": project.get("created_at")
+            })
+
+        return result
+
+    @staticmethod
+    def get_my_projects(current_user):
+
+        projects = ProjectRepository.get_all_projects()
+
+        result = []
+
+        for project in projects:
+
+            if current_user["email"] in project.get("members", []):
+
+                result.append({
+                    "_id": str(project["_id"]),
+                    "project_key": project.get("project_key"),
+                    "name": project.get("name"),
+                    "description": project.get("description"),
+                    "members": project.get("members", []),
+                    "created_at": project.get("created_at")
+                })
 
         return result
 
@@ -53,9 +83,14 @@ class ProjectService:
                 "message": "Project not found"
             }
 
-        project["_id"] = str(project["_id"])
-
-        return project
+        return {
+            "_id": str(project["_id"]),
+            "project_key": project.get("project_key"),
+            "name": project.get("name"),
+            "description": project.get("description"),
+            "members": project.get("members", []),
+            "created_at": project.get("created_at")
+        }
 
     @staticmethod
     def update_project(project_id: str, project):
