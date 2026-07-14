@@ -1,0 +1,72 @@
+.sidebar{
+    width:260px;
+    background:#1e293b;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:30px 18px;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:45px;
+    font-size:20px;
+    font-weight:700;
+    line-height:1.4;
+    color:white;
+}
+
+.sidebar nav{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.sidebar a{
+    text-decoration:none;
+    color:#cbd5e1;
+    padding:14px 18px;
+    border-radius:10px;
+    transition:0.3s;
+    font-size:16px;
+    font-weight:500;
+}
+
+.sidebar a:hover{
+    background:#334155;
+    color:white;
+}
+
+.sidebar .active{
+    background:#2563eb;
+    color:white;
+}
+
+.sidebar-bottom{
+    margin-top:30px;
+}
+
+.role-text{
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:15px;
+    color:white;
+}
+
+.logout-btn{
+    width:100%;
+    padding:16px;
+    background:#dc2626;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.logout-btn:hover{
+    background:#b91c1c;
+}

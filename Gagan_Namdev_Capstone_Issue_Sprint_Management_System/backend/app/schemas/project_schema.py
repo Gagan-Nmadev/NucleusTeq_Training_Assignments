@@ -20,6 +20,7 @@ class AssignMembers(BaseModel):
 
 class ProjectResponse(BaseModel):
     id: str
+    project_key: str
     name: str
     description: str
     members: List[str]

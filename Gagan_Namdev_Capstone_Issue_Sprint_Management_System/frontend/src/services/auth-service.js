@@ -1,20 +1,16 @@
-import axios from "axios";
-import { API_BASE_URL } from "../config/api-config";
+import api from "../config/axios";
 
-export const loginUser = async (loginData) => {
-  const response = await axios.post(
-    `${API_BASE_URL}/users/login`,
-    loginData
-  );
-
-  return response.data;
+export const loginUser = async (data) => {
+    const response = await api.post("/users/login", data);
+    return response.data;
 };
 
-export const registerUser = async (registerData) => {
-  const response = await axios.post(
-    `${API_BASE_URL}/users/register`,
-    registerData
-  );
+export const registerUser = async (data) => {
+    const response = await api.post("/users/register", data);
+    return response.data;
+};
 
-  return response.data;
+export const getProfile = async () => {
+    const response = await api.get("/users/me");
+    return response.data;
 };
