@@ -26,3 +26,43 @@ class IssueRepository:
                 "$set": data
             }
         )
+
+    @staticmethod
+    def get_by_status(status: str):
+        return list(
+            db.issues.find(
+                {
+                    "status": status
+                }
+            )
+        )
+
+    @staticmethod
+    def get_by_priority(priority: str):
+        return list(
+            db.issues.find(
+                {
+                    "priority": priority
+                }
+            )
+        )
+
+    @staticmethod
+    def get_by_assignee(assignee: str):
+        return list(
+            db.issues.find(
+                {
+                    "assignee": assignee
+                }
+            )
+        )
+
+    @staticmethod
+    def get_by_project(project_id: str):
+        return list(
+            db.issues.find(
+                {
+                    "project_id": project_id
+                }
+            )
+        )
