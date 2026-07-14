@@ -6,6 +6,7 @@ from app.api.routers.user_router import router as user_router
 from app.api.routers.admin_router import router as admin_router
 from app.api.routers.project_router import router as project_router
 from app.api.routers.issue_router import router as issue_router
+from app.api.routers.sprint_router import router as sprint_router
 
 app = FastAPI(title=settings.APP_NAME)
 
@@ -31,3 +32,4 @@ app.include_router(user_router)
 app.include_router(admin_router)
 app.include_router(project_router)
 app.include_router(issue_router)
+app.include_router(sprint_router)
