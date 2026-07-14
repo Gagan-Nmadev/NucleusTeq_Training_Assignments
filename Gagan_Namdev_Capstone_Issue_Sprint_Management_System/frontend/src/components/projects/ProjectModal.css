@@ -1,0 +1,163 @@
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    backdrop-filter:blur(4px);
+}
+
+.project-modal{
+    width:650px;
+    max-width:95%;
+    background:#fff;
+    border-radius:14px;
+    padding:28px;
+    box-shadow:0 15px 40px rgba(0,0,0,.2);
+}
+
+.project-modal h2{
+    text-align:center;
+    margin-bottom:25px;
+    color:#1e293b;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:18px;
+}
+
+.form-group label{
+    margin-bottom:8px;
+    font-weight:600;
+    color:#334155;
+}
+
+.form-group input,
+.form-group textarea{
+    padding:12px 15px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:15px;
+    outline:none;
+    transition:.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
+
+.form-group textarea{
+    resize:none;
+}
+
+.members-container{
+    max-height:220px;
+    overflow-y:auto;
+    border:1px solid #dbe4f0;
+    border-radius:10px;
+    padding:10px;
+    background:#f8fafc;
+    margin-bottom:15px;
+}
+
+.member-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.25s;
+    border:1px solid transparent;
+}
+
+.member-item:hover{
+    background:#eff6ff;
+    border-color:#bfdbfe;
+}
+
+.member-item input{
+    width:18px;
+    height:18px;
+    cursor:pointer;
+}
+
+.member-item strong{
+    color:#1e293b;
+    font-size:15px;
+}
+
+.member-item small{
+    color:#64748b;
+    font-size:13px;
+}
+
+.selected-count{
+    margin:12px 0 20px;
+    font-weight:600;
+    color:#2563eb;
+}
+
+.modal-buttons{
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+}
+
+.cancel-btn,
+.save-btn{
+    border:none;
+    padding:12px 22px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.cancel-btn{
+    background:#e5e7eb;
+    color:#1f2937;
+}
+
+.cancel-btn:hover{
+    background:#d1d5db;
+}
+
+.save-btn{
+    background:#2563eb;
+    color:#fff;
+}
+
+.save-btn:hover{
+    background:#1d4ed8;
+}
+
+.save-btn:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+@media(max-width:768px){
+
+    .project-modal{
+        width:95%;
+        padding:20px;
+    }
+
+    .modal-buttons{
+        flex-direction:column;
+    }
+
+    .cancel-btn,
+    .save-btn{
+        width:100%;
+    }
+
+}

@@ -1,0 +1,99 @@
+.filters-container {
+
+    display: flex;
+
+    gap: 15px;
+
+    align-items: center;
+
+    margin: 20px 0;
+
+    flex-wrap: wrap;
+
+}
+
+
+
+/* Search Input */
+
+.filters-container input {
+
+    width: 250px;
+
+    padding: 12px 15px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    outline: none;
+
+}
+
+
+
+.filters-container input:focus {
+
+    border-color: #2563eb;
+
+}
+
+
+
+/* Select Dropdown */
+
+.filters-container select {
+
+    width: 180px;
+
+    padding: 12px 15px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    background: white;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    outline: none;
+
+}
+
+
+
+.filters-container select:focus {
+
+    border-color: #2563eb;
+
+}
+
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+
+    .filters-container {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+
+    .filters-container input,
+    .filters-container select {
+
+        width:100%;
+
+    }
+
+}
