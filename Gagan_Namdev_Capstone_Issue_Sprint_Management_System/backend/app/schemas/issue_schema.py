@@ -7,3 +7,7 @@ class IssueCreate(BaseModel):
     project_id: str
     assignee: str
     priority: str
+
+
+class IssueStatusUpdate(BaseModel):
+    status: str
