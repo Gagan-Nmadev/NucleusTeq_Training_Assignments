@@ -47,7 +47,7 @@ class IssueService:
                 "message": "Issue not found"
             }
 
-        # Only assignee can update status
+    
         if issue["assignee"] != current_user["email"]:
             return {
                 "message": "Only assignee can update issue status"
