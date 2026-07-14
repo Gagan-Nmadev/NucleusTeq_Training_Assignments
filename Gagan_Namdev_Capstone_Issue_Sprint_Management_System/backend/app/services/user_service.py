@@ -23,6 +23,7 @@ class UserService:
             name=user.name,
             email=user.email,
             password=hashed_password,
+            role=user.role,
         )
 
         UserRepository.create_user(user_data)
@@ -46,8 +47,11 @@ class UserService:
             return {"message": "Invalid Password"}
 
         token = create_access_token(
-            {"sub": existing_user["email"]}
-        )
+            {
+            "sub": existing_user["email"],
+            "role": existing_user["role"]
+            }
+        ) 
 
         return {
             "access_token": token,
