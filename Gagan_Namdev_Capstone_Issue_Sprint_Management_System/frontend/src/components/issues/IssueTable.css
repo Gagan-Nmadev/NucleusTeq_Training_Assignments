@@ -1,0 +1,147 @@
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+}
+
+thead {
+    background: #2563eb;
+    color: white;
+}
+
+thead th {
+    padding: 15px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: 0.2s;
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+tbody td {
+    padding: 14px 15px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.empty {
+    text-align: center;
+    padding: 30px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.issue-type {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.priority {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.priority.low {
+    background: #22c55e;
+}
+
+.priority.medium {
+    background: #f59e0b;
+}
+
+.priority.high {
+    background: #ef4444;
+}
+
+.priority.critical {
+    background: #991b1b;
+}
+
+.status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status.todo {
+    background: #6b7280;
+}
+
+.status.in_progress {
+    background: #2563eb;
+}
+
+.status.done {
+    background: #16a34a;
+}
+
+.edit-btn,
+.delete-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.edit-btn {
+    background: #2563eb;
+    margin-right: 8px;
+}
+
+.edit-btn:hover {
+    background: #1d4ed8;
+}
+
+.delete-btn {
+    background: #ef4444;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+@media (max-width: 768px) {
+    thead th,
+    tbody td {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
