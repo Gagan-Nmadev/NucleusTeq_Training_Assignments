@@ -1,0 +1,57 @@
+.pagination{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:25px;
+
+}
+
+.pagination button{
+
+    min-width:90px;
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    background:#e5e7eb;
+
+}
+
+.pagination button:hover:not(:disabled){
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+.active-page{
+
+    background:#2563eb !important;
+
+    color:white;
+
+    min-width:45px !important;
+
+}
+
+.pagination button:disabled{
+
+    background:#cbd5e1;
+
+    cursor:not-allowed;
+
+}

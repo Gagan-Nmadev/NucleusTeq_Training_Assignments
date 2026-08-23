@@ -1,0 +1,68 @@
+body {
+    font-family: Arial;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background: #7607b5;
+    color: rgb(230, 231, 231);
+    text-align: center;
+    padding: 15px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    justify-content: center;
+}
+
+.analytics {
+    display: flex;
+    justify-content: space-around;
+    background: rgb(221, 185, 6);
+    margin: 10px;
+    padding: 10px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 15px;
+}
+
+.grid div {
+    background: rgba(176, 226, 8, 0.737);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+button {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.form-section {
+    background: rgb(202, 4, 119);
+    margin: 15px;
+    padding: 15px;
+}
+
+#loading {
+    text-align: center;
+    display: none;
+}
+
+/* Responsive */
+@media(max-width: 768px){
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        flex-direction: column;
+    }
+}
